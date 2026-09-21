@@ -1,25 +1,28 @@
-const express = require('express');
-const { testFunc, testFunc3, divide } = require('./testFunc');
+const express = require("express");
+const db = require("./database");
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+
+app.get("/", (req, res) => {
+    res.send("Server đang chạy");
 });
 
+app.get("/test-db", (req, res) => {
+    db.query("SELECT 1 AS test", (err, result) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({
+                message: "Database lỗi",
+                error: err.message
+            });
+        }
 
-app.get('/api/get', (req, res) => {
-    res.json({
-        message: 'This is a GET request!'
+        res.json(result);
     });
 });
-app.post('/api/post', (req, res) => {
-    const data = req.body;
 
-    res.json({
-        message: 'This is a POST request!',
-        data: data
-    });
+app.listen(5000, () => {
+    console.log("Server chạy tại port 5000");
 });
